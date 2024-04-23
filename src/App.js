@@ -5,7 +5,7 @@ import Home from './pages/Home.jsx'
 import { AuthContextProvider } from './context/AuthContext.js'
 import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
-import Signin from './pages/Signup.jsx'
+import Account from './pages/Account.jsx'
 
 function App() {
   return (
@@ -16,7 +16,7 @@ function App() {
           <Route path="/" element={<Home />} />
 		  <Route path='/login' element={<Login />} />
 		  <Route path='/signup' element={<Signup />} />
-		  <Route path='/signin' element={<Signin />} />
+		  <Route path='/account' element={<Account />} />
         </Routes>
       </AuthContextProvider>
     </>
