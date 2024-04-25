@@ -2,7 +2,12 @@ import React from 'react'
 
 const Account = () => {
     return (
-        <div>Account</div>
+        <>
+            <h1>Account</h1>
+            <div>
+                
+            </div>
+        </>
     )
 }
 
