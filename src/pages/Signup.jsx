@@ -13,7 +13,6 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault()
         try {
-            console.log(email, password)
             await signUp(email, password)
             navigate('/')
         } catch (error) {
