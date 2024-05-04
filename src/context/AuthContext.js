@@ -36,31 +36,55 @@ export function AuthContextProvider({ children }) {
 	}
 
 	function addCollection(collectionName) {
-		if (!user) return
+		if (!user) return // Assurez-vous que l'utilisateur est connecté
 		const userDocRef = doc(db, 'users', user.uid)
-		return setDoc(
-			userDocRef,
-			{
-				collections: arrayUnion({ name: collectionName, fiches: [] }),
-			},
-			{ merge: true }
-		)
+		return getDoc(userDocRef).then((docSnap) => {
+			if (docSnap.exists()) {
+				const userData = docSnap.data()
+				const collections = userData.collections || []
+				if (!collections.some((c) => c.name === collectionName)) {
+					const newCollection = { name: collectionName, fiches: [] }
+					const updatedCollections = [...collections, newCollection]
+					return updateDoc(userDocRef, {
+						collections: updatedCollections,
+					})
+				} else {
+					console.error('Collection already exists')
+					return null
+				}
+			} else {
+				console.error('User document does not exist')
+				return null
+			}
+		})
 	}
 
 	function deleteCollection(collectionName) {
 		if (!user) return
 		const userDocRef = doc(db, 'users', user.uid)
-		return updateDoc(userDocRef, {
-			collections: arrayRemove({ name: collectionName }),
+
+		return getDoc(userDocRef).then((docSnap) => {
+			if (docSnap.exists()) {
+				let collections = docSnap.data().collections || []
+				collections = collections.filter(
+					(c) => c.name !== collectionName
+				)
+				return updateDoc(userDocRef, { collections })
+			} else {
+				console.error('User document does not exist')
+				return null
+			}
 		})
 	}
 
 	function addFiche(collectionName, ficheContent) {
 		if (!user) return
 		const userDocRef = doc(db, 'users', user.uid)
+
 		return getDoc(userDocRef).then((docSnap) => {
 			if (docSnap.exists()) {
-				const collections = docSnap.data().collections
+				const userData = docSnap.data()
+				let collections = userData.collections || []
 				const updatedCollections = collections.map((collection) => {
 					if (collection.name === collectionName) {
 						const updatedFiches = [
@@ -71,9 +95,13 @@ export function AuthContextProvider({ children }) {
 					}
 					return collection
 				})
+
 				return updateDoc(userDocRef, {
 					collections: updatedCollections,
 				})
+			} else {
+				console.error('User document does not exist')
+				return null
 			}
 		})
 	}

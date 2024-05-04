@@ -1,29 +1,36 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { UserAuth } from '../context/AuthContext';
 
 const Collection = () => {
     const { addCollection, deleteCollection, user, collections } = UserAuth();
     const [newCollectionName, setNewCollectionName] = useState('');
 
+    useEffect(() => {
+        if (user) {
+            console.log('User ID:', user.uid); // Assurez-vous que cette logique n'interfère pas avec les performances ou la sécurité
+        }
+    }, [user]);
+
     const handleAddCollection = async (e) => {
         e.preventDefault();
-        console.log(user + collections)
-        if (newCollectionName) {
+        if (newCollectionName && user && user.uid) {
             await addCollection(newCollectionName);
             setNewCollectionName('');
         }
     };
 
     const handleDeleteCollection = async (collectionName) => {
-        await deleteCollection(collectionName);
+        if (user && user.uid) {
+            await deleteCollection(collectionName);
+        }
     };
 
     return (
         <div className='p-4'>
             <h1 className='text-lg font-bold mb-4'>Manage Collections</h1>
             <form onSubmit={handleAddCollection} className='mb-4'>
-                <input 
-                    type="text" 
+                <input
+                    type="text"
                     value={newCollectionName}
                     onChange={(e) => setNewCollectionName(e.target.value)}
                     placeholder="New collection name"
