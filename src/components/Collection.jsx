@@ -5,11 +5,7 @@ const Collection = () => {
     const { addCollection, deleteCollection, user, collections } = UserAuth();
     const [newCollectionName, setNewCollectionName] = useState('');
 
-    useEffect(() => {
-        if (user) {
-            console.log('User ID:', user.uid); // Assurez-vous que cette logique n'interfère pas avec les performances ou la sécurité
-        }
-    }, [user]);
+    
 
     const handleAddCollection = async (e) => {
         e.preventDefault();
