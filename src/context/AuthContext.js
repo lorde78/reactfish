@@ -1,138 +1,63 @@
-import { createContext, useContext, useEffect, useState } from 'react'
-import { auth, db } from '../firebase'
+import React, { createContext, useContext, useState, useEffect } from 'react'
+import { auth } from '../firebase'
 import {
 	createUserWithEmailAndPassword,
 	signInWithEmailAndPassword,
 	signOut,
 	onAuthStateChanged,
 } from 'firebase/auth'
-import {
-	setDoc,
-	doc,
-	updateDoc,
-	getDoc,
-	arrayUnion,
-	arrayRemove,
-} from 'firebase/firestore'
 
 const AuthContext = createContext()
 
 export function AuthContextProvider({ children }) {
-	const [user, setUser] = useState({})
-
-	function signUp(email, password) {
-		createUserWithEmailAndPassword(auth, email, password)
-		setDoc(doc(db, 'users', email), {
-			collections: [],
-		})
-	}
-
-	function signIn(email, password) {
-		return signInWithEmailAndPassword(auth, email, password)
-	}
-
-	function logOut() {
-		return signOut(auth)
-	}
-
-	function addCollection(collectionName) {
-		if (!user) return // Assurez-vous que l'utilisateur est connecté
-		const userDocRef = doc(db, 'users', user.uid)
-		return getDoc(userDocRef).then((docSnap) => {
-			if (docSnap.exists()) {
-				const userData = docSnap.data()
-				const collections = userData.collections || []
-				if (!collections.some((c) => c.name === collectionName)) {
-					const newCollection = { name: collectionName, fiches: [] }
-					const updatedCollections = [...collections, newCollection]
-					return updateDoc(userDocRef, {
-						collections: updatedCollections,
-					})
-				} else {
-					console.error('Collection already exists')
-					return null
-				}
-			} else {
-				console.error('User document does not exist')
-				return null
-			}
-		})
-	}
-
-	function deleteCollection(collectionName) {
-		if (!user) return
-		const userDocRef = doc(db, 'users', user.uid)
-
-		return getDoc(userDocRef).then((docSnap) => {
-			if (docSnap.exists()) {
-				let collections = docSnap.data().collections || []
-				collections = collections.filter(
-					(c) => c.name !== collectionName
-				)
-				return updateDoc(userDocRef, { collections })
-			} else {
-				console.error('User document does not exist')
-				return null
-			}
-		})
-	}
-
-	function addFiche(collectionName, ficheContent) {
-		if (!user) return
-		const userDocRef = doc(db, 'users', user.uid)
-
-		return getDoc(userDocRef).then((docSnap) => {
-			if (docSnap.exists()) {
-				const userData = docSnap.data()
-				let collections = userData.collections || []
-				const updatedCollections = collections.map((collection) => {
-					if (collection.name === collectionName) {
-						const updatedFiches = [
-							...collection.fiches,
-							{ content: ficheContent },
-						]
-						return { ...collection, fiches: updatedFiches }
-					}
-					return collection
-				})
-
-				return updateDoc(userDocRef, {
-					collections: updatedCollections,
-				})
-			} else {
-				console.error('User document does not exist')
-				return null
-			}
-		})
-	}
+	const [user, setUser] = useState(null)
 
 	useEffect(() => {
 		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
-			setUser(currentUser)
+			if (currentUser) {
+				setUser(currentUser)
+				console.log('User is signed in or signed up:', currentUser)
+			} else {
+				setUser(null)
+				console.log('User is signed out')
+			}
 		})
-		return unsubscribe
+
+		return () => unsubscribe()
 	}, [])
 
-	// useEffect(() => {
-	// 	const signoff = onAuthStateChanged(auth, (currentUser) => {
-	// 		setUser(currentUser)
-	// 	})
-	// 	return () => {
-	// 		signoff()
-	// 	}
-	// })
+	async function signUp(email, password) {
+		try {
+			const userCredential = await createUserWithEmailAndPassword(
+				auth,
+				email,
+				password
+			)
+			console.log('User created with UID:', userCredential.user.uid)
+		} catch (error) {
+			console.log('Error signing up:', error.message)
+		}
+	}
+
+	async function signIn(email, password) {
+		try {
+			await signInWithEmailAndPassword(auth, email, password)
+		} catch (error) {
+			console.log('Error signing in:', error.message)
+		}
+	}
+
+	async function logOut() {
+		try {
+			await signOut(auth)
+			console.log('User logged out successfully')
+		} catch (error) {
+			console.log('Error logging out:', error.message)
+		}
+	}
+
 	return (
-		<AuthContext.Provider
-			value={{
-				signUp,
-				signIn,
-				logOut,
-				addCollection,
-				deleteCollection,
-				addFiche,
-				user,
-			}}
-		>
+		<AuthContext.Provider value={{ user, signUp, signIn, logOut }}>
 			{children}
 		</AuthContext.Provider>
 	)

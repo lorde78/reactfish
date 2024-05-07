@@ -1,23 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import { UserAuth } from '../context/AuthContext';
+import React, { useState } from 'react';
+import { UserAuth } from '../context/AuthContext';  // Assurez-vous que ce hook est bien défini
+import { useCollections } from '../context/CollectionContext';
 
 const Collection = () => {
-    const { addCollection, deleteCollection, user, collections } = UserAuth();
+    const { user } = UserAuth();
+    const { addCollection, deleteCollection, collections } = useCollections();
     const [newCollectionName, setNewCollectionName] = useState('');
-
-    
 
     const handleAddCollection = async (e) => {
         e.preventDefault();
         if (newCollectionName && user && user.uid) {
-            await addCollection(newCollectionName);
+            await addCollection(user.uid, newCollectionName);
             setNewCollectionName('');
         }
     };
 
-    const handleDeleteCollection = async (collectionName) => {
+    const handleDeleteCollection = async (collectionId) => {
         if (user && user.uid) {
-            await deleteCollection(collectionName);
+            await deleteCollection(user.uid, collectionId);
         }
     };
 
@@ -36,10 +36,10 @@ const Collection = () => {
                     Add Collection
                 </button>
             </form>
-            {collections?.map((collection, index) => (
+            {collections.map((collection, index) => (
                 <div key={index} className='mb-4 p-4 shadow-md'>
-                    <h2 className='text-xl'>{collection.name}</h2>
-                    <button onClick={() => handleDeleteCollection(collection.name)} className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2'>
+                    <h2 className='text-xl'>{collection.title}</h2>
+                    <button onClick={() => handleDeleteCollection(collection.id)} className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2'>
                         Delete
                     </button>
                 </div>

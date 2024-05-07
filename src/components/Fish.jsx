@@ -1,20 +1,24 @@
-import React, { useState } from 'react'
-import { UserAuth } from '../context/AuthContext'
+import React, { useState } from 'react';
+import { UserAuth } from '../context/AuthContext';
+import { useCollections } from '../context/CollectionContext';
 
-const Fiche = ({ collectionName }) => {
-    const { addFiche, deleteFiche, user } = UserAuth(); 
+const Fiche = ({ collectionId }) => {
+    const { user } = UserAuth();
+    const { addFiche, deleteFiche } = useCollections();
     const [newFicheContent, setNewFicheContent] = useState('');
 
     const handleAddFiche = async (e) => {
         e.preventDefault();
-        if (newFicheContent) {
-            await addFiche(collectionName, newFicheContent);
+        if (newFicheContent && user && user.uid) {
+            await addFiche(user.uid, collectionId, newFicheContent);
             setNewFicheContent('');
         }
     };
 
     const handleDeleteFiche = async (ficheId) => {
-        await deleteFiche(collectionName, ficheId);
+        if (user && user.uid) {
+            await deleteFiche(user.uid, collectionId, ficheId);
+        }
     };
 
     return (
@@ -31,14 +35,7 @@ const Fiche = ({ collectionName }) => {
                     Add Fiche
                 </button>
             </form>
-            {user?.collections.find(col => col.name === collectionName)?.fiches.map((fiche, index) => (
-                <div key={index} className='flex justify-between items-center mb-2 p-2 border'>
-                    <p>{fiche.content}</p>
-                    <button onClick={() => handleDeleteFiche(fiche.id)} className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded'>
-                        Delete
-                    </button>
-                </div>
-            ))}
+            {/* Fetch and display fiches here */}
         </div>
     );
 };
