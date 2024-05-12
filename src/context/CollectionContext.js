@@ -1,6 +1,6 @@
 import React, { createContext, useContext, useState } from 'react';
 import { db } from '../firebase';
-import { doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';  // Use getDoc instead of getDocs
+import { doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';
 
 const CollectionContext = createContext();
 
@@ -18,7 +18,7 @@ export const CollectionProvider = ({ children }) => {
 
     const getCollections = async (userId) => {
         const userRef = doc(db, 'users', userId);
-        const docSnap = await getDoc(userRef);  // Correct method to fetch data from a document
+        const docSnap = await getDoc(userRef);
         if (docSnap.exists()) {
             const userCollections = docSnap.data().collections;
             setCollections(userCollections || []);
