@@ -1,51 +1,60 @@
-import React, { useState } from 'react';
-import { UserAuth } from '../context/AuthContext';  // Assurez-vous que ce hook est bien défini
+// CollectionComponent.js
+import React, { useEffect, useState } from 'react';
+import { UserAuth } from '../context/AuthContext';
 import { useCollections } from '../context/CollectionContext';
+import { Link } from 'react-router-dom';
 
-const Collection = () => {
+const CollectionComponent = () => {
     const { user } = UserAuth();
-    const { addCollection, deleteCollection, collections } = useCollections();
-    const [newCollectionName, setNewCollectionName] = useState('');
+    const { addCollection, getCollections, collections } = useCollections();
+    const [title, setTitle] = useState('');
 
-    const handleAddCollection = async (e) => {
-        e.preventDefault();
-        if (newCollectionName && user && user.uid) {
-            await addCollection(user.uid, newCollectionName);
-            setNewCollectionName('');
+    useEffect(() => {
+        if (user) {
+            getCollections(user.uid);
         }
-    };
+    }, [user]);
 
-    const handleDeleteCollection = async (collectionId) => {
-        if (user && user.uid) {
-            await deleteCollection(user.uid, collectionId);
+    const handleSubmit = async (e) => {
+        e.preventDefault();
+        if (user && title) {
+            await addCollection(user.uid, title);
+            setTitle('');
         }
     };
 
     return (
-        <div className='p-4'>
-            <h1 className='text-lg font-bold mb-4'>Manage Collections</h1>
-            <form onSubmit={handleAddCollection} className='mb-4'>
-                <input
-                    type="text"
-                    value={newCollectionName}
-                    onChange={(e) => setNewCollectionName(e.target.value)}
-                    placeholder="New collection name"
-                    className='border p-2 mr-2'
-                />
-                <button type="submit" className='bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded'>
-                    Add Collection
-                </button>
-            </form>
-            {collections.map((collection, index) => (
-                <div key={index} className='mb-4 p-4 shadow-md'>
-                    <h2 className='text-xl'>{collection.title}</h2>
-                    <button onClick={() => handleDeleteCollection(collection.id)} className='bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded ml-2'>
-                        Delete
+        <div className="bg-black text-white min-h-screen">
+            <div className="container mx-auto py-10">
+                <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-6">
+                    <input
+                        type="text"
+                        value={title}
+                        onChange={(e) => setTitle(e.target.value)}
+                        placeholder="Enter collection title"
+                        className="w-full p-2 text-black rounded"
+                    />
+                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3 block w-full">
+                        Add Collection
                     </button>
+                </form>
+                <div>
+                    <h2 className="text-lg mb-4">Your Collections:</h2>
+                    <ul>
+                        {collections.map((collection) => (
+                            <li key={collection.id} className="mb-2 p-2 bg-gray-800 rounded">
+                                <span className="mr-2">{collection.title}</span>
+                                <Link to={`/collections/${collection.id}/fiches`}
+                                      className="text-blue-400 hover:text-blue-600">
+                                    View Fiches
+                                </Link>
+                            </li>
+                        ))}
+                    </ul>
                 </div>
-            ))}
+            </div>
         </div>
     );
 };
 
-export default Collection;
+export default CollectionComponent;

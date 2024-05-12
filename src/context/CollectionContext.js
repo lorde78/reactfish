@@ -1,90 +1,43 @@
-import React, { createContext, useContext, useState } from 'react'
-import { db } from '../firebase'
-import {
-	doc,
-	collection,
-	setDoc,
-	addDoc,
-	deleteDoc,
-	updateDoc,
-	arrayUnion,
-	arrayRemove,
-} from 'firebase/firestore'
+import React, { createContext, useContext, useState } from 'react';
+import { db } from '../firebase';
+import { doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore';  // Use getDoc instead of getDocs
 
-const CollectionContext = createContext()
+const CollectionContext = createContext();
 
 export const CollectionProvider = ({ children }) => {
-	const [collections, setCollections] = useState([])
+    const [collections, setCollections] = useState([]);
 
-	// Ajoute une nouvelle collection
-	async function addCollection(userId, title) {
-		const userRef = doc(db, 'users', userId)
-		const newCollection = {
-			id: doc(collection(db, 'users', userId, 'collections')).id,
-			title: title,
-		}
-		try {
-			await updateDoc(userRef, {
-				collections: arrayUnion(newCollection),
-			})
-			setCollections((prev) => [...prev, newCollection])
-			console.log('Collection added:', newCollection.id)
-		} catch (error) {
-			console.log('Error adding collection:', error.message)
-		}
-	}
+    const addCollection = async (userId, title) => {
+        const userRef = doc(db, 'users', userId);
+        const newCollection = { id: Date.now().toString(), title: title };
+        await updateDoc(userRef, {
+            collections: arrayUnion(newCollection)
+        });
+        setCollections((prev) => [...prev, newCollection]);
+    };
 
-	// Supprime une collection
-	async function deleteCollection(userId, collectionId) {
-		const userRef = doc(db, 'users', userId)
-		const collectionToRemove = { id: collectionId }
-		try {
-			await updateDoc(userRef, {
-				collections: arrayRemove(collectionToRemove),
-			})
-			setCollections((prev) => prev.filter((c) => c.id !== collectionId))
-			console.log('Collection removed:', collectionId)
-		} catch (error) {
-			console.log('Error removing collection:', error.message)
-		}
-	}
+    const getCollections = async (userId) => {
+        const userRef = doc(db, 'users', userId);
+        const docSnap = await getDoc(userRef);  // Correct method to fetch data from a document
+        if (docSnap.exists()) {
+            const userCollections = docSnap.data().collections;
+            setCollections(userCollections || []);
+        } else {
+            console.log("No such document!");
+        }
+    };
 
-	// Ajoute une fiche à une collection spécifique
-	async function addFiche(userId, collectionId, title) {
-		const ficheRef = collection(
-			db,
-			'users',
-			userId,
-			'collections',
-			collectionId,
-			'fiches'
-		)
-		const newFiche = {
-			id: doc(ficheRef).id,
-			title: title,
-		}
-		try {
-			await setDoc(doc(ficheRef, newFiche.id), newFiche)
-			console.log('Fiche added:', newFiche.id)
-		} catch (error) {
-			console.log('Error adding fiche:', error.message)
-		}
-	}
-
-	return (
-		<CollectionContext.Provider
-			value={{
-				collections,
-				addCollection,
-				deleteCollection,
-				addFiche,
-			}}
-		>
-			{children}
-		</CollectionContext.Provider>
-	)
-}
+    return (
+        <CollectionContext.Provider value={{ collections, addCollection, getCollections }}>
+            {children}
+        </CollectionContext.Provider>
+    );
+};
 
 export function useCollections() {
-	return useContext(CollectionContext)
+    const context = useContext(CollectionContext);
+    if (!context) {
+        throw new Error('useCollections must be used within a CollectionProvider');
+    }
+    return context;
 }

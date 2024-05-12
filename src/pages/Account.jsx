@@ -5,7 +5,7 @@ const Account = () => {
     
     return (
         <>
-            <h1>Account</h1>
+            <h1 className='text-white'>Account</h1>
             <div>
                 <Collection />
             </div>

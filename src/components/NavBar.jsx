@@ -1,6 +1,6 @@
 import React from "react";
 import { Link, useNavigate } from "react-router-dom";
-import { UserAuth } from "../context/AuthContext";  // Assurez-vous que UserAuth est bien le hook correct.
+import { UserAuth } from "../context/AuthContext";
 
 const NavBar = () => {
 	const { user, logOut } = UserAuth();
@@ -9,7 +9,7 @@ const NavBar = () => {
 	const handleLogout = async () => {
 		try {
 			await logOut();
-			navigate("/");  // Redirige vers la page d'accueil après déconnexion
+			navigate("/");
 		} catch (error) {
 			console.log(error);
 		}

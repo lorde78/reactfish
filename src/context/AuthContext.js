@@ -6,6 +6,17 @@ import {
 	signOut,
 	onAuthStateChanged,
 } from 'firebase/auth'
+import { db } from '../firebase'
+import {
+	doc,
+	collection,
+	setDoc,
+	addDoc,
+	deleteDoc,
+	updateDoc,
+	arrayUnion,
+	arrayRemove,
+} from 'firebase/firestore'
 
 const AuthContext = createContext()
 
@@ -22,7 +33,6 @@ export function AuthContextProvider({ children }) {
 				console.log('User is signed out')
 			}
 		})
-
 		return () => unsubscribe()
 	}, [])
 
@@ -33,7 +43,19 @@ export function AuthContextProvider({ children }) {
 				email,
 				password
 			)
-			console.log('User created with UID:', userCredential.user.uid)
+			const user = userCredential.user
+			console.log('User created with UID:', user.uid)
+
+			// Création d'un document pour l'utilisateur dans Firestore
+			await setDoc(doc(db, 'users', user.uid), {
+				userInfo: {
+					email: email,
+				},
+				collections: [], // Commence avec une collection vide
+				fiches: [], // Commence avec une fiche vide
+			})
+
+			console.log('Initial user data set in Firestore')
 		} catch (error) {
 			console.log('Error signing up:', error.message)
 		}
