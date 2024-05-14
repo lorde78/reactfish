@@ -46,13 +46,11 @@ export function AuthContextProvider({ children }) {
 			const user = userCredential.user
 			console.log('User created with UID:', user.uid)
 
-			// Création d'un document pour l'utilisateur dans Firestore
 			await setDoc(doc(db, 'users', user.uid), {
 				userInfo: {
 					email: email,
 				},
-				collections: [], // Commence avec une collection vide
-				fiches: [], // Commence avec une fiche vide
+				collections: [],
 			})
 
 			console.log('Initial user data set in Firestore')

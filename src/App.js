@@ -7,20 +7,27 @@ import Login from './pages/Login.jsx'
 import Signup from './pages/Signup.jsx'
 import Account from './pages/Account.jsx'
 import ProtectedRoute from './components/ProtectedRoute.jsx'
-import { CollectionProvider } from './context/CollectionContext';
+import { CollectionProvider } from './context/CollectionContext'
 
 function App() {
 	return (
 		<>
 			<AuthContextProvider>
 				<CollectionProvider>
-				<NavBar />
-				<Routes>
-					<Route path="/" element={<Home />} />
-					<Route path="/login" element={<Login />} />
-					<Route path="/signup" element={<Signup />} />
-					<Route path="/account" element={<ProtectedRoute><Account /></ProtectedRoute>} />
-				</Routes>
+					<NavBar />
+					<Routes>
+						<Route path="/" element={<Home />} />
+						<Route path="/login" element={<Login />} />
+						<Route path="/signup" element={<Signup />} />
+						<Route
+							path="/account"
+							element={
+								<ProtectedRoute>
+									<Account />
+								</ProtectedRoute>
+							}
+						/>
+					</Routes>
 				</CollectionProvider>
 			</AuthContextProvider>
 		</>

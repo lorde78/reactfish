@@ -1,10 +1,9 @@
-// CollectionComponent.js
 import React, { useEffect, useState } from 'react';
 import { UserAuth } from '../context/AuthContext';
 import { useCollections } from '../context/CollectionContext';
-import { Link } from 'react-router-dom';
+import Fish from './Fish';
 
-const CollectionComponent = () => {
+const Collection = () => {
     const { user } = UserAuth();
     const { addCollection, getCollections, collections } = useCollections();
     const [title, setTitle] = useState('');
@@ -15,7 +14,7 @@ const CollectionComponent = () => {
         }
     }, [user]);
 
-    const handleSubmit = async (e) => {
+    const handleCollectionSubmit = async (e) => {
         e.preventDefault();
         if (user && title) {
             await addCollection(user.uid, title);
@@ -26,7 +25,7 @@ const CollectionComponent = () => {
     return (
         <div className="bg-black text-white min-h-screen">
             <div className="container mx-auto py-10">
-                <form onSubmit={handleSubmit} className="max-w-md mx-auto mb-6">
+                <form onSubmit={handleCollectionSubmit} className="max-w-md mx-auto mb-6">
                     <input
                         type="text"
                         value={title}
@@ -42,12 +41,11 @@ const CollectionComponent = () => {
                     <h2 className="text-lg mb-4">Your Collections:</h2>
                     <ul>
                         {collections.map((collection) => (
-                            <li key={collection.id} className="mb-2 p-2 bg-gray-800 rounded">
-                                <span className="mr-2">{collection.title}</span>
-                                <Link to={`/collections/${collection.id}/fiches`}
-                                      className="text-blue-400 hover:text-blue-600">
-                                    View Fiches
-                                </Link>
+                            <li key={collection.id} className="mb-4 p-4 bg-gray-800 rounded">
+                                <div className="flex justify-between items-center">
+                                    <span>{collection.title}</span>
+                                </div>
+                                <Fish collection={collection} />
                             </li>
                         ))}
                     </ul>
@@ -57,4 +55,4 @@ const CollectionComponent = () => {
     );
 };
 
-export default CollectionComponent;
+export default Collection;
