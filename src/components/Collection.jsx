@@ -44,6 +44,7 @@ const Collection = () => {
                             <li key={collection.id} className="mb-4 p-4 bg-gray-800 rounded">
                                 <div className="flex justify-between items-center">
                                     <span>{collection.title}</span>
+                                    <button className='border rounded-full bg-gray-500 hover:bg-gray-700 text-white px-2'>-</button>
                                 </div>
                                 <Fish collection={collection} />
                             </li>

@@ -27,8 +27,8 @@ const Login = () => {
                         <h1>Sign in</h1>
                         {/* {error ? <span className='text-red-500'>{error}</span> : null} */}
                         <form onSubmit={handleSubmit}  className='w-full flex flex-col py-4' action="">
-                            <input onChange={(e) => setEmail(e.target.value)} className='p-3 my-2' type="email" placeholder='Email' autoComplete='email' />
-                            <input onChange={(e) => setPassword(e.target.value)} className='p-3 my-2' type="password" placeholder='Paswword' autoComplete='password' />
+                            <input onChange={(e) => setEmail(e.target.value)} className='p-3 my-2 text-black' type="email" placeholder='Email' autoComplete='email' />
+                            <input onChange={(e) => setPassword(e.target.value)} className='p-3 my-2 text-black' type="password" placeholder='Paswword' autoComplete='password' />
                             <button className='bg-blue-400 py-3 my-6 rounded font-bold'>Sign In</button>
                             <div className='flex justify-between'>
                                 <span><input className='mr-2' type="checkbox" />Remember me</span>

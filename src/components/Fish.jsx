@@ -4,7 +4,7 @@ import { useCollections } from '../context/CollectionContext';
 
 const Fish = ({ collection }) => {
     const { user } = UserAuth();
-    const { addFiche } = useCollections();
+    const { addFiche, deleteFiche  } = useCollections();
     const [ficheTitle, setFicheTitle] = useState('');
 
     const handleFicheSubmit = async (e) => {
@@ -31,8 +31,9 @@ const Fish = ({ collection }) => {
             </form>
             <ul className="mt-4">
                 {collection.fiches.map((fiche) => (
-                    <li key={fiche.id} className="mb-2 p-2 bg-gray-600 rounded">
-                        {fiche.title}
+                    <li key={fiche.id} className="mb-2 p-2 bg-gray-600 rounded flex  justify-between">
+                        <span>{fiche.title}</span>
+                        <button onClick={() => deleteFiche(user.uid, collection.id, fiche.id)} className='border rounded-full bg-gray-500 hover:bg-gray-700 text-white px-2'>-</button>
                     </li>
                 ))}
             </ul>
