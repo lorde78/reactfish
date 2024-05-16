@@ -2,6 +2,7 @@ import React, { useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { UserAuth } from '../context/AuthContext';
 import { useCollections } from '../context/CollectionContext';
+import { FiTrash2 } from 'react-icons/fi';
 
 const ItemType = 'fiche';
 
@@ -65,7 +66,9 @@ const FicheItem = ({ fiche, originCollectionId }) => {
 	return (
 		<li ref={drag} className={`mb-2 p-2 bg-gray-600 rounded flex justify-between ${isDragging ? 'opacity-50' : 'opacity-100'}`}>
 			<span>{fiche.title}</span>
-			<button onClick={() => deleteFiche(user.uid, originCollectionId, fiche.id)} className='border rounded-full bg-gray-500 hover:bg-gray-700 text-white px-2'>-</button>
+			<button onClick={() => deleteFiche(user.uid, originCollectionId, fiche.id)} className='border rounded-full p-1 bg-red-500 hover:bg-red-700 text-white'>
+				<FiTrash2 className="text-lg" />
+			</button>
 		</li>
 	);
 };
