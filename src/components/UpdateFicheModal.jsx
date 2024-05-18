@@ -21,7 +21,7 @@ const UpdateFicheModal = ({ isOpen, onClose, onSubmit, initialTitle }) => {
                         type="text"
                         value={newTitle}
                         onChange={(e) => setNewTitle(e.target.value)}
-                        className="border-2 border-gray-300 rounded p-2 w-full"
+                        className="border-2 border-gray-300 rounded p-2 w-full text-black"
                     />
                     <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-2">
                         Update
