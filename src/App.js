@@ -10,6 +10,7 @@ import ProtectedRoute from './components/ProtectedRoute.jsx'
 import { CollectionProvider } from './context/CollectionContext'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
+import { FishProvider } from './context/FishContext.js'
 
 function App() {
 	return (
@@ -17,20 +18,22 @@ function App() {
 			<AuthContextProvider>
 				<DndProvider backend={HTML5Backend}>
 					<CollectionProvider>
-						<NavBar />
-						<Routes>
-							<Route path="/" element={<Home />} />
-							<Route path="/login" element={<Login />} />
-							<Route path="/signup" element={<Signup />} />
-							<Route
-								path="/account"
-								element={
-									<ProtectedRoute>
-										<Account />
-									</ProtectedRoute>
-								}
-							/>
-						</Routes>
+						<FishProvider>
+							<NavBar />
+							<Routes>
+								<Route path="/" element={<Home />} />
+								<Route path="/login" element={<Login />} />
+								<Route path="/signup" element={<Signup />} />
+								<Route
+									path="/account"
+									element={
+										<ProtectedRoute>
+											<Account />
+										</ProtectedRoute>
+									}
+								/>
+							</Routes>
+						</FishProvider>
 					</CollectionProvider>
 				</DndProvider>
 			</AuthContextProvider>

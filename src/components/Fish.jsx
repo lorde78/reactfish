@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useDrag, useDrop } from 'react-dnd';
 import { UserAuth } from '../context/AuthContext';
-import { useCollections } from '../context/CollectionContext';
+import { useFishes } from '../context/FishContext';
 import { FiTrash2, FiEdit } from 'react-icons/fi';
 import UpdateFicheModal from './UpdateFicheModal';
 
@@ -9,7 +9,7 @@ const ItemType = 'fiche';
 
 const Fish = ({ collection }) => {
 	const { user } = UserAuth();
-	const { addFiche, moveFiche } = useCollections();
+	const { addFiche, moveFiche, collections } = useFishes(); // Get updated collections from context
 	const [ficheTitle, setFicheTitle] = useState('');
 
 	const [, drop] = useDrop({
@@ -29,6 +29,8 @@ const Fish = ({ collection }) => {
 		}
 	};
 
+	const updatedCollection = collections.find(col => col.id === collection.id) || collection;
+
 	return (
 		<div ref={drop} className="mt-4">
 			<form onSubmit={handleFicheSubmit}>
@@ -44,8 +46,8 @@ const Fish = ({ collection }) => {
 				</button>
 			</form>
 			<ul className="mt-4">
-				{collection.fiches.map((fiche) => (
-					<FicheItem key={fiche.id} fiche={fiche} originCollectionId={collection.id} />
+				{updatedCollection.fiches.map((fiche) => (
+					<FicheItem key={fiche.id} fiche={fiche} originCollectionId={updatedCollection.id} />
 				))}
 			</ul>
 		</div>
@@ -54,7 +56,7 @@ const Fish = ({ collection }) => {
 
 const FicheItem = ({ fiche, originCollectionId }) => {
 	const { user } = UserAuth();
-	const { deleteFiche, updateFiche } = useCollections();
+	const { deleteFiche, updateFiche } = useFishes();
 	const [isModalOpen, setIsModalOpen] = useState(false);
 
 	const [{ isDragging }, drag] = useDrag({
