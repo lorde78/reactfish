@@ -31,19 +31,21 @@ const Collection = () => {
 
     return (
         <div className="bg-black text-white min-h-screen">
-            <div className="container mx-auto py-10">
-                <form onSubmit={handleCollectionSubmit} className="max-w-md mx-auto mb-6">
-                    <input
-                        type="text"
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Enter collection title"
-                        className="w-full p-2 text-black rounded"
-                    />
-                    <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3 block w-full">
-                        Add Collection
-                    </button>
-                </form>
+            <div className="container mx-auto">
+                <div className="flex">
+                    <form onSubmit={handleCollectionSubmit} className="max-w-md mx-auto mb-6">
+                        <input
+                            type="text"
+                            value={title}
+                            onChange={(e) => setTitle(e.target.value)}
+                            placeholder="Enter collection title"
+                            className="w-full p-2 text-black rounded"
+                        />
+                        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded mt-3 block w-full">
+                            Add Collection
+                        </button>
+                    </form>
+                </div>
                 <div>
                     <h2 className="text-lg mb-4">Your Collections:</h2>
                     <ul>
