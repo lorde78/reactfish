@@ -13,7 +13,7 @@ const Collection = () => {
         if (user) {
             getCollections(user.uid);
         }
-    }, [user]);
+    }, [user, getCollections]);
 
     const handleCollectionSubmit = async (e) => {
         e.preventDefault();

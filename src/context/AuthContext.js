@@ -9,13 +9,7 @@ import {
 import { db } from '../firebase'
 import {
 	doc,
-	collection,
 	setDoc,
-	addDoc,
-	deleteDoc,
-	updateDoc,
-	arrayUnion,
-	arrayRemove,
 } from 'firebase/firestore'
 
 const AuthContext = createContext()
