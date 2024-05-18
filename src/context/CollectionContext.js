@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState } from 'react'
-import { db } from '../firebase' // Assurez-vous que ce chemin est correct pour votre configuration Firebase
+import { db } from '../firebase'
 import { doc, updateDoc, arrayUnion, getDoc } from 'firebase/firestore'
 
 const CollectionContext = createContext()
@@ -128,6 +128,29 @@ export const CollectionProvider = ({ children }) => {
 		}
 	}
 
+	const updateFiche = async (userId, collectionId, ficheId, newTitle) => {
+		const userRef = doc(db, 'users', userId)
+		const docSnap = await getDoc(userRef)
+		if (docSnap.exists()) {
+			const userCollections = docSnap.data().collections
+			const updatedCollections = userCollections.map((collection) => {
+				if (collection.id === collectionId) {
+					const updatedFiches = collection.fiches.map((fiche) => {
+						if (fiche.id === ficheId) {
+							return { ...fiche, title: newTitle }
+						}
+						return fiche
+					})
+					return { ...collection, fiches: updatedFiches }
+				}
+				return collection
+			})
+
+			await updateDoc(userRef, { collections: updatedCollections })
+			setCollections(updatedCollections)
+		}
+	}
+
 	return (
 		<CollectionContext.Provider
 			value={{
@@ -138,6 +161,7 @@ export const CollectionProvider = ({ children }) => {
 				deleteCollection,
 				deleteFiche,
 				moveFiche,
+				updateFiche,
 			}}
 		>
 			{children}
