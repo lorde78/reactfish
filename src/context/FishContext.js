@@ -1,11 +1,19 @@
 import React, { createContext, useContext, useState } from 'react'
 import { db } from '../firebase'
-import { doc, updateDoc, getDoc } from 'firebase/firestore'
+import { doc, updateDoc, getDoc, arrayUnion, setDoc } from 'firebase/firestore'
 
 const FishContext = createContext()
 
 export const FishProvider = ({ children }) => {
 	const [collections, setCollections] = useState([])
+
+	const ensureUserDocumentExists = async (userId) => {
+		const userRef = doc(db, 'users', userId)
+		const docSnap = await getDoc(userRef)
+		if (!docSnap.exists()) {
+			await setDoc(userRef, { collections: [] })
+		}
+	}
 
 	const syncCollections = async (userId) => {
 		const userRef = doc(db, 'users', userId)
@@ -18,20 +26,76 @@ export const FishProvider = ({ children }) => {
 		}
 	}
 
-	const addFiche = async (userId, collectionId, ficheTitle) => {
+	const addCollection = async (userId, title) => {
+		await ensureUserDocumentExists(userId)
+		const userRef = doc(db, 'users', userId)
+		const newCollection = {
+			id: Date.now().toString(),
+			title: title,
+			fishes: [],
+		}
+		await updateDoc(userRef, {
+			collections: arrayUnion(newCollection),
+		})
+		setCollections((prev) => [...prev, newCollection])
+	}
+
+	const getCollections = async (userId) => {
+		const userRef = doc(db, 'users', userId)
+		const docSnap = await getDoc(userRef)
+		if (docSnap.exists()) {
+			const userCollections = docSnap.data().collections
+			setCollections(userCollections || [])
+		} else {
+			console.log('No such document!')
+		}
+	}
+
+	const deleteCollection = async (userId, collectionId) => {
+		const userRef = doc(db, 'users', userId)
+		const docSnap = await getDoc(userRef)
+		if (docSnap.exists()) {
+			const filteredCollections = docSnap
+				.data()
+				.collections.filter(
+					(collection) => collection.id !== collectionId
+				)
+			await updateDoc(userRef, { collections: filteredCollections })
+			setCollections(filteredCollections)
+		}
+	}
+
+	const updateCollection = async (userId, updatedCollection) => {
+		const userRef = doc(db, 'users', userId)
+		const docSnap = await getDoc(userRef)
+		if (docSnap.exists()) {
+			const userCollections = docSnap.data().collections
+			const updatedCollections = userCollections.map((collection) => {
+				if (collection.id === updatedCollection.id) {
+					return { ...collection, ...updatedCollection }
+				}
+				return collection
+			})
+			await updateDoc(userRef, { collections: updatedCollections })
+			setCollections(updatedCollections)
+		}
+	}
+
+	const addFish = async (userId, collectionId, fishTitle) => {
+		await ensureUserDocumentExists(userId)
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
 			const userCollections = docSnap.data().collections
 			const updatedCollections = userCollections.map((collection) => {
 				if (collection.id === collectionId) {
-					const newFiche = {
+					const newFish = {
 						id: Date.now().toString(),
-						title: ficheTitle,
+						title: fishTitle,
 					}
 					return {
 						...collection,
-						fiches: [...collection.fiches, newFiche],
+						fishes: [...collection.fishes, newFish],
 					}
 				}
 				return collection
@@ -42,35 +106,35 @@ export const FishProvider = ({ children }) => {
 		}
 	}
 
-	const moveFiche = async (
+	const moveFish = async (
 		userId,
 		sourceCollectionId,
 		targetCollectionId,
-		ficheId
+		fishId
 	) => {
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
 			const userCollections = docSnap.data().collections
-			let ficheToMove
+			let fishToMove
 			const updatedCollections = userCollections
 				.map((collection) => {
 					if (collection.id === sourceCollectionId) {
-						ficheToMove = collection.fiches.find(
-							(fiche) => fiche.id === ficheId
+						fishToMove = collection.fishes.find(
+							(fish) => fish.id === fishId
 						)
-						const remainingFiches = collection.fiches.filter(
-							(fiche) => fiche.id !== ficheId
+						const remainingFishes = collection.fishes.filter(
+							(fish) => fish.id !== fishId
 						)
-						return { ...collection, fiches: remainingFiches }
+						return { ...collection, fishes: remainingFishes }
 					}
 					return collection
 				})
 				.map((collection) => {
-					if (collection.id === targetCollectionId && ficheToMove) {
+					if (collection.id === targetCollectionId && fishToMove) {
 						return {
 							...collection,
-							fiches: [...collection.fiches, ficheToMove],
+							fishes: [...collection.fishes, fishToMove],
 						}
 					}
 					return collection
@@ -81,7 +145,7 @@ export const FishProvider = ({ children }) => {
 		}
 	}
 
-	const deleteFiche = async (userId, collectionId, ficheId) => {
+	const deleteFish = async (userId, collectionId, fishId) => {
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
@@ -89,32 +153,32 @@ export const FishProvider = ({ children }) => {
 				.data()
 				.collections.map((collection) => {
 					if (collection.id === collectionId) {
-						const filteredFiches = collection.fiches.filter(
-							(fiche) => fiche.id !== ficheId
+						const filteredFishes = collection.fishes.filter(
+							(fish) => fish.id !== fishId
 						)
-						return { ...collection, fiches: filteredFiches }
+						return { ...collection, fishes: filteredFishes }
 					}
 					return collection
 				})
 			await updateDoc(userRef, { collections: newCollections })
-			await syncCollections(userId) 
+			await syncCollections(userId)
 		}
 	}
 
-	const updateFiche = async (userId, collectionId, ficheId, newTitle) => {
+	const updateFish = async (userId, collectionId, fishId, newTitle) => {
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
 			const userCollections = docSnap.data().collections
 			const updatedCollections = userCollections.map((collection) => {
 				if (collection.id === collectionId) {
-					const updatedFiches = collection.fiches.map((fiche) => {
-						if (fiche.id === ficheId) {
-							return { ...fiche, title: newTitle }
+					const updatedFishes = collection.fishes.map((fish) => {
+						if (fish.id === fishId) {
+							return { ...fish, title: newTitle }
 						}
-						return fiche
+						return fish
 					})
-					return { ...collection, fiches: updatedFiches }
+					return { ...collection, fishes: updatedFishes }
 				}
 				return collection
 			})
@@ -128,10 +192,14 @@ export const FishProvider = ({ children }) => {
 		<FishContext.Provider
 			value={{
 				collections,
-				addFiche,
-				moveFiche,
-				deleteFiche,
-				updateFiche,
+				addCollection,
+				getCollections,
+				deleteCollection,
+				updateCollection,
+				addFish,
+				moveFish,
+				deleteFish,
+				updateFish,
 			}}
 		>
 			{children}
@@ -140,9 +208,5 @@ export const FishProvider = ({ children }) => {
 }
 
 export function useFishes() {
-	const context = useContext(FishContext)
-	if (!context) {
-		throw new Error('useFishes must be used within a FishProvider')
-	}
-	return context
+	return useContext(FishContext)
 }

@@ -1,13 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { UserAuth } from '../context/AuthContext';
-import { useCollections } from '../context/CollectionContext';
+import { useFishes } from '../context/FishContext';
 import Fish from './Fish';
 import { FiTrash2, FiEdit } from 'react-icons/fi';
 import UpdateCollectionModal from './UpdateCollectionModal';
 
 const Collection = () => {
     const { user } = UserAuth();
-    const { addCollection, getCollections, collections, deleteCollection, updateCollection } = useCollections();
+    const { addCollection, getCollections, collections, deleteCollection, updateCollection } = useFishes();
     const [title, setTitle] = useState('');
     const [isModalOpen, setIsModalOpen] = useState(false);
     const [currentCollection, setCurrentCollection] = useState(null);
@@ -83,7 +83,7 @@ const Collection = () => {
                 <div>
                     <h2 className="text-lg mb-4">Your Collections:</h2>
                     <ul>
-                        {collections.map((collection) => (
+                        {Array.isArray(collections) && collections.map((collection) => (
                             <li key={collection.id} className="mb-4 p-4 bg-gray-800 rounded">
                                 <div className="flex justify-between items-center">
                                     <span>{collection.title}</span>
