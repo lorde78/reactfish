@@ -1,12 +1,38 @@
 import React, { useState } from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
+import HeroSection from '../components/HeroSection';
 
 const Login = () => {
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
     const { signIn } = UserAuth();
     const navigate = useNavigate();
+
+    const [isEmailFocused, setIsEmailFocused] = useState(false);
+    const [isPasswordFocused, setIsPasswordFocused] = useState(false);
+
+    const handleEmailFocus = () => {
+        setIsEmailFocused(true);
+    };
+
+    const handleEmailBlur = (e) => {
+        setIsEmailFocused(false);
+        if (!e.target.value) {
+            setEmail('');
+        }
+    };
+
+    const handlePasswordFocus = () => {
+        setIsPasswordFocused(true);
+    };
+
+    const handlePasswordBlur = (e) => {
+        setIsPasswordFocused(false);
+        if (!e.target.value) {
+            setPassword('');
+        }
+    };
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -19,49 +45,62 @@ const Login = () => {
     };
 
     return (
-        <div className="min-h-screen flex items-center justify-center bg-gray-100">
-            <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-                <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
-                <form onSubmit={handleSubmit} className="space-y-6">
-                    <div>
-                        <label htmlFor="email" className="block text-sm font-medium text-gray-700">Email</label>
-                        <input
-                            id="email"
-                            type="email"
-                            value={email}
-                            onChange={(e) => setEmail(e.target.value)}
-                            className="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                            placeholder="Email"
-                            required
-                        />
+        <>
+            <HeroSection showText={false} />
+            <div className="z-50 absolute inset-0 flex items-center justify-center">
+                <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
+                    <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
+                    <form onSubmit={handleSubmit} className="space-y-6">
+                        <div className="relative mt-5">
+                            <input
+                                type="email"
+                                value={email}
+                                onFocus={handleEmailFocus}
+                                onBlur={handleEmailBlur}
+                                onChange={(e) => setEmail(e.target.value)}
+                                className="w-full p-2 border-2 border-gray-300 rounded text-gray-800 focus:outline-none transition-all duration-300 ease-in-out"
+                                required
+                            />
+                            <label
+                                className={`absolute left-2 transition-all duration-300 ease-in-out pointer-events-none bg-white px-1 ${isEmailFocused || email ? 'text-xs -top-2 text-gray-700' : 'text-sm top-3 text-gray-500'
+                                    }`}
+                            >
+                                Email
+                            </label>
+                        </div>
+                        <div className="relative mt-5">
+                            <input
+                                type="password"
+                                value={password}
+                                onFocus={handlePasswordFocus}
+                                onBlur={handlePasswordBlur}
+                                onChange={(e) => setPassword(e.target.value)}
+                                className="w-full p-2 border-2 border-gray-300 rounded text-gray-800 focus:outline-none transition-all duration-300 ease-in-out"
+                                required
+                            />
+                            <label
+                                className={`absolute left-2 transition-all duration-300 ease-in-out pointer-events-none bg-white px-1 ${isPasswordFocused || password ? 'text-xs -top-2 text-gray-700' : 'text-sm top-3 text-gray-500'
+                                    }`}
+                            >
+                                Password
+                            </label>
+                        </div>
+                        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300">Sign In</button>
+                        <div className="flex justify-between items-center mt-4">
+                            <label className="flex items-center">
+                                <input type="checkbox" className="mr-2" />
+                                Remember me
+                            </label>
+                            <Link to="/" className="text-sm text-blue-500 hover:underline">Need help?</Link>
+                        </div>
+                    </form>
+                    <div className="mt-8 text-center">
+                        <span className="text-sm">No account yet?</span>
+                        <Link to="/signup" className="text-sm text-blue-500 hover:underline ml-1">Create your account here</Link>
                     </div>
-                    <div>
-                        <label htmlFor="password" className="block text-sm font-medium text-gray-700">Password</label>
-                        <input
-                            id="password"
-                            type="password"
-                            value={password}
-                            onChange={(e) => setPassword(e.target.value)}
-                            className="mt-1 p-2 w-full border border-gray-300 rounded-md shadow-sm focus:ring focus:ring-blue-200"
-                            placeholder="Password"
-                            required
-                        />
-                    </div>
-                    <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300">Sign In</button>
-                    <div className="flex justify-between items-center mt-4">
-                        <label className="flex items-center">
-                            <input type="checkbox" className="mr-2" />
-                            Remember me
-                        </label>
-                        <Link to="/" className="text-sm text-blue-500 hover:underline">Need help?</Link>
-                    </div>
-                </form>
-                <div className="mt-8 text-center">
-                    <span className="text-sm">No account yet?</span>
-                    <Link to="/signup" className="text-sm text-blue-500 hover:underline ml-1">Create your account here</Link>
                 </div>
             </div>
-        </div>
+        </>
     );
 };
 
