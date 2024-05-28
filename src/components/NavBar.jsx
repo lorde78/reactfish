@@ -8,8 +8,8 @@ const NavBar = () => {
 
 	const handleLogout = async () => {
 		try {
+			navigate("/login"); // Naviguez vers une page publique avant la déconnexion
 			await logOut();
-			navigate("/");
 		} catch (error) {
 			console.log(error);
 		}

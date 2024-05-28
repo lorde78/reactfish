@@ -1,14 +1,24 @@
-import React, { createContext, useContext, useState } from 'react'
+import React, { createContext, useContext, useState, useEffect } from 'react'
 import { db } from '../firebase'
 import { doc, updateDoc, getDoc, arrayUnion, setDoc } from 'firebase/firestore'
+import { UserAuth } from '../context/AuthContext'
 
 const FishContext = createContext()
 
 export const FishProvider = ({ children }) => {
+	const { user } = UserAuth()
 	const [collections, setCollections] = useState(() => {
 		const cachedCollections = localStorage.getItem('collections')
 		return cachedCollections ? JSON.parse(cachedCollections) : []
 	})
+
+	useEffect(() => {
+		if (user) {
+			syncCollections(user.uid)
+		} else {
+			setCollections([])
+		}
+	}, [user])
 
 	const ensureUserDocumentExists = async (userId) => {
 		const userRef = doc(db, 'users', userId)
@@ -19,6 +29,7 @@ export const FishProvider = ({ children }) => {
 	}
 
 	const syncCollections = async (userId) => {
+		if (!userId) return
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
@@ -34,6 +45,7 @@ export const FishProvider = ({ children }) => {
 	}
 
 	const addCollection = async (userId, title) => {
+		if (!userId) return
 		await ensureUserDocumentExists(userId)
 		const userRef = doc(db, 'users', userId)
 		const newCollection = {
@@ -48,6 +60,7 @@ export const FishProvider = ({ children }) => {
 	}
 
 	const getCollections = async (userId) => {
+		if (!userId) return
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
@@ -63,6 +76,7 @@ export const FishProvider = ({ children }) => {
 	}
 
 	const deleteCollection = async (userId, collectionId) => {
+		if (!userId) return
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
@@ -77,6 +91,7 @@ export const FishProvider = ({ children }) => {
 	}
 
 	const updateCollection = async (userId, updatedCollection) => {
+		if (!userId) return
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
@@ -93,6 +108,7 @@ export const FishProvider = ({ children }) => {
 	}
 
 	const addFish = async (userId, collectionId, fishTitle) => {
+		if (!userId) return
 		await ensureUserDocumentExists(userId)
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
@@ -123,6 +139,7 @@ export const FishProvider = ({ children }) => {
 		targetCollectionId,
 		fishId
 	) => {
+		if (!userId) return
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
@@ -157,6 +174,7 @@ export const FishProvider = ({ children }) => {
 	}
 
 	const deleteFish = async (userId, collectionId, fishId) => {
+		if (!userId) return
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
@@ -177,6 +195,7 @@ export const FishProvider = ({ children }) => {
 	}
 
 	const updateFish = async (userId, collectionId, fishId, newTitle) => {
+		if (!userId) return
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
