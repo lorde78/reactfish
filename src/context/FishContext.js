@@ -5,24 +5,16 @@ import { doc, updateDoc, getDoc, arrayUnion, setDoc } from 'firebase/firestore'
 const FishContext = createContext()
 
 export const FishProvider = ({ children }) => {
-	const [collections, setCollections] = useState([])
+	const [collections, setCollections] = useState(() => {
+		const cachedCollections = localStorage.getItem('collections')
+		return cachedCollections ? JSON.parse(cachedCollections) : []
+	})
 
 	const ensureUserDocumentExists = async (userId) => {
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (!docSnap.exists()) {
 			await setDoc(userRef, { collections: [] })
-		}
-	}
-
-	const syncCollections = async (userId) => {
-		const userRef = doc(db, 'users', userId)
-		const docSnap = await getDoc(userRef)
-		if (docSnap.exists()) {
-			const userCollections = docSnap.data().collections
-			setCollections(userCollections || [])
-		} else {
-			console.log('No such document!')
 		}
 	}
 
@@ -37,15 +29,25 @@ export const FishProvider = ({ children }) => {
 		await updateDoc(userRef, {
 			collections: arrayUnion(newCollection),
 		})
-		setCollections((prev) => [...prev, newCollection])
+		const updatedCollections = [...collections, newCollection]
+		setCollections(updatedCollections)
+		localStorage.setItem('collections', JSON.stringify(updatedCollections))
 	}
 
 	const getCollections = async (userId) => {
+		if (collections.length > 0) {
+			return
+		}
+
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
 		if (docSnap.exists()) {
 			const userCollections = docSnap.data().collections
 			setCollections(userCollections || [])
+			localStorage.setItem(
+				'collections',
+				JSON.stringify(userCollections || [])
+			)
 		} else {
 			console.log('No such document!')
 		}
@@ -62,6 +64,10 @@ export const FishProvider = ({ children }) => {
 				)
 			await updateDoc(userRef, { collections: filteredCollections })
 			setCollections(filteredCollections)
+			localStorage.setItem(
+				'collections',
+				JSON.stringify(filteredCollections)
+			)
 		}
 	}
 
@@ -78,6 +84,10 @@ export const FishProvider = ({ children }) => {
 			})
 			await updateDoc(userRef, { collections: updatedCollections })
 			setCollections(updatedCollections)
+			localStorage.setItem(
+				'collections',
+				JSON.stringify(updatedCollections)
+			)
 		}
 	}
 
@@ -102,7 +112,11 @@ export const FishProvider = ({ children }) => {
 			})
 
 			await updateDoc(userRef, { collections: updatedCollections })
-			await syncCollections(userId)
+			setCollections(updatedCollections)
+			localStorage.setItem(
+				'collections',
+				JSON.stringify(updatedCollections)
+			)
 		}
 	}
 
@@ -141,7 +155,11 @@ export const FishProvider = ({ children }) => {
 				})
 
 			await updateDoc(userRef, { collections: updatedCollections })
-			await syncCollections(userId)
+			setCollections(updatedCollections)
+			localStorage.setItem(
+				'collections',
+				JSON.stringify(updatedCollections)
+			)
 		}
 	}
 
@@ -161,7 +179,8 @@ export const FishProvider = ({ children }) => {
 					return collection
 				})
 			await updateDoc(userRef, { collections: newCollections })
-			await syncCollections(userId)
+			setCollections(newCollections)
+			localStorage.setItem('collections', JSON.stringify(newCollections))
 		}
 	}
 
@@ -184,7 +203,11 @@ export const FishProvider = ({ children }) => {
 			})
 
 			await updateDoc(userRef, { collections: updatedCollections })
-			await syncCollections(userId)
+			setCollections(updatedCollections)
+			localStorage.setItem(
+				'collections',
+				JSON.stringify(updatedCollections)
+			)
 		}
 	}
 
