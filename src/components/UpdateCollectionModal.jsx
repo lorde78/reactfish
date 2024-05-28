@@ -11,7 +11,7 @@ const UpdateCollectionModal = ({ isOpen, onClose, onSubmit, initialCollection })
     const handleBlur = (e) => {
         setIsFocused(false);
         if (!e.target.value) {
-            setNewTitle(''); // Clears input if left empty
+            setNewTitle('');
         }
     };
 

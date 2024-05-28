@@ -29,7 +29,7 @@ const Fish = ({ collection }) => {
     const handleBlur = (e) => {
         setIsFocused(false);
         if (!e.target.value) {
-            setFishTitle(''); // Clears input if left empty
+            setFishTitle('');
         }
     };
 

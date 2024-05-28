@@ -69,9 +69,8 @@ const Collection = () => {
                             className="w-full p-2 border-2 border-gray-300 rounded text-gray-800 focus:outline-none transition-all duration-300 ease-in-out"
                         />
                         <label
-                            className={`absolute left-2 transition-all duration-300 ease-in-out pointer-events-none bg-white px-1 ${
-                                isFocused || title ? 'text-xs -top-2 text-gray-700' : 'text-sm top-3 text-gray-500'
-                            }`}
+                            className={`absolute left-2 transition-all duration-300 ease-in-out pointer-events-none bg-white px-1 ${isFocused || title ? 'text-xs -top-2 text-gray-700' : 'text-sm top-3 text-gray-500'
+                                }`}
                         >
                             Title
                         </label>
