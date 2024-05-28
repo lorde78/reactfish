@@ -47,7 +47,7 @@ const Login = () => {
     return (
         <>
             <HeroSection showText={false} />
-            <div className="z-50 absolute inset-0 flex items-center justify-center">
+            <div className="flex items-center justify-center min-h-screen pt-16">
                 <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
                     <h2 className="text-2xl font-bold mb-6 text-center">Sign In</h2>
                     <form onSubmit={handleSubmit} className="space-y-6">

@@ -1,4 +1,4 @@
-import React from "react";
+import React from 'react';
 import { Link, useNavigate } from "react-router-dom";
 import { UserAuth } from "../context/AuthContext";
 
@@ -8,8 +8,8 @@ const NavBar = () => {
 
 	const handleLogout = async () => {
 		try {
-			navigate("/login"); // Naviguez vers une page publique avant la déconnexion
 			await logOut();
+			navigate("/");
 		} catch (error) {
 			console.log(error);
 		}
@@ -30,11 +30,8 @@ const NavBar = () => {
 				</div>
 			) : (
 				<div className="flex items-center">
-					<Link to="/login">
-						<button className="text-white border-white rounded border py-2 px-6 mr-2">Sign In</button>
-					</Link>
-					<Link to="/signup">
-						<button className="text-white border-white rounded border py-2 px-6">Sign Up</button>
+					<Link to="/auth">
+						<button className="text-white border-white rounded border py-2 px-6 mr-2">Sign In / Sign Up</button>
 					</Link>
 				</div>
 			)}

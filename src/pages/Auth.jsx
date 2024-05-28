@@ -1,12 +1,13 @@
 import React, { useState } from 'react';
-import { Link, useNavigate } from 'react-router-dom';
-import { UserAuth } from '../context/AuthContext';
+import { Link, useNavigate } from "react-router-dom";
+import { UserAuth } from "../context/AuthContext";
 import HeroSection from '../components/HeroSection';
 
-const Signup = () => {
+const Auth = () => {
+    const [isLogin, setIsLogin] = useState(true);
     const [email, setEmail] = useState('');
     const [password, setPassword] = useState('');
-    const { signUp } = UserAuth();
+    const { signIn, signUp } = UserAuth();
     const navigate = useNavigate();
 
     const [isEmailFocused, setIsEmailFocused] = useState(false);
@@ -37,7 +38,11 @@ const Signup = () => {
     const handleSubmit = async (e) => {
         e.preventDefault();
         try {
-            await signUp(email, password);
+            if (isLogin) {
+                await signIn(email, password);
+            } else {
+                await signUp(email, password);
+            }
             navigate('/');
         } catch (error) {
             console.log(error);
@@ -45,11 +50,11 @@ const Signup = () => {
     };
 
     return (
-        <>
+        <div className="relative min-h-screen flex flex-col items-center justify-center">
             <HeroSection showText={false} />
-            <div className="flex items-center justify-center min-h-screen pt-16">
+            <div className="absolute inset-0 flex items-center justify-center z-10">
                 <div className="bg-white p-8 rounded-lg shadow-md w-full max-w-md">
-                    <h2 className="text-2xl font-bold mb-6 text-center">Sign Up</h2>
+                    <h2 className="text-2xl font-bold mb-6 text-center">{isLogin ? 'Sign In' : 'Sign Up'}</h2>
                     <form onSubmit={handleSubmit} className="space-y-6">
                         <div className="relative mt-5">
                             <input
@@ -85,23 +90,46 @@ const Signup = () => {
                                 Password
                             </label>
                         </div>
-                        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300">Sign Up</button>
-                        <div className="flex justify-between items-center mt-4">
-                            <label className="flex items-center">
-                                <input type="checkbox" className="mr-2" />
-                                Remember me
-                            </label>
-                            <Link to="/" className="text-sm text-blue-500 hover:underline">Need help?</Link>
-                        </div>
+                        <button type="submit" className="w-full bg-blue-500 text-white py-2 rounded-md hover:bg-blue-600 transition duration-300">
+                            {isLogin ? 'Sign In' : 'Sign Up'}
+                        </button>
+                        {isLogin && (
+                            <div className="flex justify-between items-center mt-4">
+                                <label className="flex items-center">
+                                    <input type="checkbox" className="mr-2" />
+                                    Remember me
+                                </label>
+                                <Link to="/" className="text-sm text-blue-500 hover:underline">Need help?</Link>
+                            </div>
+                        )}
                     </form>
                     <div className="mt-8 text-center">
-                        <span className="text-sm">Already have an account?</span>
-                        <Link to="/login" className="text-sm text-blue-500 hover:underline ml-1">Sign In</Link>
+                        {isLogin ? (
+                            <>
+                                <span className="text-sm">No account yet?</span>
+                                <button
+                                    onClick={() => setIsLogin(false)}
+                                    className="text-sm text-blue-500 hover:underline ml-1"
+                                >
+                                    Create your account here
+                                </button>
+                            </>
+                        ) : (
+                            <>
+                                <span className="text-sm">Already have an account?</span>
+                                <button
+                                    onClick={() => setIsLogin(true)}
+                                    className="text-sm text-blue-500 hover:underline ml-1"
+                                >
+                                    Sign In
+                                </button>
+                            </>
+                        )}
                     </div>
                 </div>
             </div>
-        </>
+        </div>
     );
 };
 
-export default Signup;
+export default Auth;
