@@ -24,14 +24,14 @@ const NavBar = () => {
 				<div className="flex items-center">
 					<span className="text-white mr-4">Bienvenue: {user.email}</span>
 					<Link to="/account">
-						<button className="text-white border-white rounded border py-2 px-6 mr-2">Account</button>
+						<button className="hover-fill-button text-white border-white rounded border py-2 px-6 mr-2">Account</button>
 					</Link>
-					<button onClick={handleLogout} className="text-white border-white rounded border py-2 px-6">Log Out</button>
+					<button onClick={handleLogout} className="hover-fill-button text-white border-white rounded border py-2 px-6">Log Out</button>
 				</div>
 			) : (
 				<div className="flex items-center">
 					<Link to="/auth">
-						<button className="text-white border-white rounded border py-2 px-6 mr-2">Sign In / Sign Up</button>
+						<button className="hover-fill-button text-white border-white rounded border py-2 px-6 mr-2">Sign In / Sign Up</button>
 					</Link>
 				</div>
 			)}

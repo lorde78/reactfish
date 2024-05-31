@@ -39,18 +39,17 @@ const UpdateCollectionModal = ({ isOpen, onClose, onSubmit, initialCollection })
                             className="w-full p-2 border-2 border-gray-300 rounded text-gray-800 focus:outline-none transition-all duration-300 ease-in-out"
                         />
                         <label
-                            className={`absolute left-2 transition-all duration-300 ease-in-out pointer-events-none bg-white px-1 ${
-                                isFocused || newTitle ? 'text-xs -top-2 text-gray-700' : 'text-sm top-3 text-gray-500'
-                            }`}
+                            className={`absolute left-2 transition-all duration-300 ease-in-out pointer-events-none bg-white px-1 ${isFocused || newTitle ? 'text-xs -top-2 text-gray-700' : 'text-sm top-3 text-gray-500'
+                                }`}
                         >
                             Title
                         </label>
                     </div>
                     <div className="flex justify-end gap-4 mt-4">
-                        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Update
                         </button>
-                        <button onClick={onClose} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
+                        <button onClick={onClose} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
                             Cancel
                         </button>
                     </div>

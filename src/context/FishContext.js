@@ -107,7 +107,16 @@ export const FishProvider = ({ children }) => {
 		}
 	}
 
-	const addFish = async (userId, collectionId, fishTitle) => {
+	const addFish = async (
+		userId,
+		collectionId,
+		fishTitle,
+		fishText,
+		fishSubject,
+		fishKeyPoints,
+		fishDates,
+		fishReferences
+	) => {
 		if (!userId) return
 		await ensureUserDocumentExists(userId)
 		const userRef = doc(db, 'users', userId)
@@ -119,6 +128,11 @@ export const FishProvider = ({ children }) => {
 					const newFish = {
 						id: Date.now().toString(),
 						title: fishTitle,
+						text: fishText,
+						subject: fishSubject,
+						keyPoints: fishKeyPoints,
+						dates: fishDates,
+						references: fishReferences,
 					}
 					return {
 						...collection,
@@ -194,7 +208,17 @@ export const FishProvider = ({ children }) => {
 		}
 	}
 
-	const updateFish = async (userId, collectionId, fishId, newTitle) => {
+	const updateFish = async (
+		userId,
+		collectionId,
+		fishId,
+		newTitle,
+		newText,
+		newSubject,
+		newKeyPoints,
+		newDates,
+		newReferences
+	) => {
 		if (!userId) return
 		const userRef = doc(db, 'users', userId)
 		const docSnap = await getDoc(userRef)
@@ -204,7 +228,15 @@ export const FishProvider = ({ children }) => {
 				if (collection.id === collectionId) {
 					const updatedFishes = collection.fishes.map((fish) => {
 						if (fish.id === fishId) {
-							return { ...fish, title: newTitle }
+							return {
+								...fish,
+								title: newTitle,
+								text: newText,
+								subject: newSubject,
+								keyPoints: newKeyPoints,
+								dates: newDates,
+								references: newReferences,
+							}
 						}
 						return fish
 					})
