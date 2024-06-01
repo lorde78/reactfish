@@ -250,6 +250,18 @@ export const FishProvider = ({ children }) => {
 		}
 	}
 
+	const gatherTextData = (collectionId) => {
+		const collection = collections.find((col) => col.id === collectionId)
+		if (!collection) return ''
+
+		return collection.fishes
+			.map(
+				(fish) =>
+					`${fish.title} ${fish.text} ${fish.subject} ${fish.keyPoints} ${fish.dates} ${fish.references}`
+			)
+			.join(' ')
+	}
+
 	return (
 		<FishContext.Provider
 			value={{
@@ -262,6 +274,7 @@ export const FishProvider = ({ children }) => {
 				moveFish,
 				deleteFish,
 				updateFish,
+				gatherTextData,
 			}}
 		>
 			{children}

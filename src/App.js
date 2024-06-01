@@ -1,23 +1,23 @@
 import React from 'react'
-import { Routes, Route } from 'react-router-dom'
-import NavBar from './components/NavBar.jsx'
-import Home from './pages/Home.jsx'
-import { AuthContextProvider } from './context/AuthContext.js'
-import Account from './pages/Account.jsx'
-import ProtectedRoute from './components/ProtectedRoute.jsx'
-// import { CollectionProvider } from './context/CollectionContext'
+import { Routes, Route, BrowserRouter as Router } from 'react-router-dom'
+import NavBar from './components/NavBar'
+import Home from './pages/Home'
+import { AuthContextProvider } from './context/AuthContext'
+import Account from './pages/Account'
+import ProtectedRoute from './components/ProtectedRoute'
 import { DndProvider } from 'react-dnd'
 import { HTML5Backend } from 'react-dnd-html5-backend'
-import { FishProvider } from './context/FishContext.js'
+import { FishProvider } from './context/FishContext'
 import Auth from './pages/Auth'
+import QuizConstructor from './components/QuizConstructor'
+import { RewardsProvider } from './context/RewardsContext'
 
 function App() {
 	return (
-		<>
 			<AuthContextProvider>
 				<DndProvider backend={HTML5Backend}>
-					{/* <CollectionProvider> */}
-						<FishProvider>
+					<FishProvider>
+						<RewardsProvider>
 							<NavBar />
 							<Routes>
 								<Route path="/" element={<Home />} />
@@ -30,12 +30,19 @@ function App() {
 										</ProtectedRoute>
 									}
 								/>
+								<Route
+									path="/create-quiz"
+									element={
+										<ProtectedRoute>
+											<QuizConstructor />
+										</ProtectedRoute>
+									}
+								/>
 							</Routes>
-						</FishProvider>
-					{/* </CollectionProvider> */}
+						</RewardsProvider>
+					</FishProvider>
 				</DndProvider>
 			</AuthContextProvider>
-		</>
 	)
 }
 
