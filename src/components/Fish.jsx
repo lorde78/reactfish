@@ -1,4 +1,6 @@
+// src/components/Fish.jsx
 import React, { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { useDrag, useDrop } from 'react-dnd';
 import { UserAuth } from '../context/AuthContext';
 import { useFishes } from '../context/FishContext';
@@ -25,7 +27,7 @@ const Fish = ({ collection }) => {
         references: false,
     });
 
-    const [showForm, setShowForm] = useState(false); // Ajout des états showForm et setShowForm
+    const [showForm, setShowForm] = useState(false);
 
     const [, drop] = useDrop({
         accept: ItemType,
@@ -83,8 +85,14 @@ const Fish = ({ collection }) => {
 
     const updatedCollection = collections.find(col => col.id === collection.id) || collection;
 
+    const navigate = useNavigate();
+
+    const handleGenerateQuiz = (fishId) => {
+        navigate(`/quiz/${fishId}`);
+    };
+
     return (
-        <div ref={drop} className="mt-4 bg-gray-800 rounded-lg shadow-lg p-4">
+        <div ref={drop} className="mt-4 bg-gray-800 rounded-lg p-4">
             <button onClick={() => setShowForm(!showForm)} className="text-white mb-4 focus:outline-none">
                 {showForm ? '-' : '+'}
             </button>
@@ -216,6 +224,7 @@ const FishItem = ({ fish, originCollectionId }) => {
     const { user } = UserAuth();
     const { deleteFish, updateFish } = useFishes();
     const [isModalOpen, setIsModalOpen] = useState(false);
+    const navigate = useNavigate();
 
     const [{ isDragging }, drag] = useDrag({
         type: ItemType,
@@ -227,6 +236,10 @@ const FishItem = ({ fish, originCollectionId }) => {
         updateFish(user.uid, originCollectionId, fish.id, newTitle, newText, newSubject, newKeyPoints, newDates, newReferences);
     };
 
+    const handleGenerateQuiz = () => {
+        navigate(`/quiz/${fish.id}`);
+    };
+
     return (
         <li ref={drag} className={`mb-2 p-3 rounded flex justify-between items-center ${isDragging ? 'opacity-50' : 'opacity-100'} bg-gray-700 text-white`}>
             <div className="flex items-center gap-2">
@@ -236,6 +249,9 @@ const FishItem = ({ fish, originCollectionId }) => {
                 <span className="font-bold">Key Points:</span> <span>{fish.keyPoints}</span>
                 <span className="font-bold">Important Dates:</span> <span>{fish.dates}</span>
                 <span className="font-bold">References:</span> <span>{fish.references}</span>
+                <button onClick={handleGenerateQuiz} className="text-purple-500 hover:text-purple-700 ml-2">
+                    Generate Quiz
+                </button>
                 <button onClick={() => setIsModalOpen(true)} className="text-blue-500 hover:text-blue-700">
                     <FiEdit className="text-lg" />
                 </button>

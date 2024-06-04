@@ -8,7 +8,8 @@ const UpdateFishModal = ({ isOpen, onClose, onSubmit, initialTitle, initialText,
     const [dates, setDates] = useState(initialDates);
     const [references, setReferences] = useState(initialReferences);
 
-    const handleSubmit = () => {
+    const handleSubmit = (e) => {
+        e.preventDefault();
         onSubmit(title, text, subject, keyPoints, dates, references);
         onClose();
     };
@@ -98,10 +99,10 @@ const UpdateFishModal = ({ isOpen, onClose, onSubmit, initialTitle, initialText,
                         </label>
                     </div>
                     <div className="flex justify-end gap-4 mt-4">
-                        <button type="submit" className="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
+                        <button type="submit" className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded">
                             Update
                         </button>
-                        <button type="button" onClick={onClose} className="bg-red-500 hover:bg-red-600 text-white font-bold py-2 px-4 rounded">
+                        <button type="button" onClick={onClose} className="bg-red-500 hover:bg-red-700 text-white font-bold py-2 px-4 rounded">
                             Cancel
                         </button>
                     </div>

@@ -262,6 +262,8 @@ export const FishProvider = ({ children }) => {
 			.join(' ')
 	}
 
+	
+
 	return (
 		<FishContext.Provider
 			value={{
