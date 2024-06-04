@@ -18,7 +18,6 @@ export function AuthContextProvider({ children }) {
 		const unsubscribe = onAuthStateChanged(auth, (currentUser) => {
 			if (currentUser) {
 				setUser(currentUser)
-				console.log('User is signed in or signed up:', currentUser)
 			} else {
 				setUser(null)
 				console.log('User is signed out')
